@@ -2,6 +2,8 @@
 from django.db import models
 from django.db.models import CharField, DateTimeField, IntegerField
 
+from assist.managers import AssistAuthResultManager
+
 RESPONSE_CODE_CHOICES = (
     ('AS000', u'АВТОРИЗАЦИЯ УСПЕШНО ЗАВЕРШЕНА'),
     ('AS100', u'ОТКАЗ В АВТОРИЗАЦИИ'),
@@ -85,6 +87,8 @@ class AssistAuthResult(models.Model):
     PacketDate      = DateTimeField(u'Дата и время запроса', null=True, blank=True)
     PatmentType     = IntegerField(u'Тип транзакции', null=True, blank=True,
                                    choices = PAYMENT_TRANSACTION_TYPE_CHOICES)
+
+    objects = AssistAuthResultManager()
 
     def __unicode__(self):
         return u"Результат авторизации в Assist %s (заказ %s): %s" % (

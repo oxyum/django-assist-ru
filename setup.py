@@ -14,13 +14,14 @@ setup(
     description=u'Приложение для интеграции платежной системы ASSIST в проекты на Django.',
     long_description=open('README.txt').read(),
 
-    classifiers=[
+    classifiers=(
         'Development Status :: Development Status :: 2 - Pre-Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Topic :: Software Development :: Libraries :: Python Modules'
-    ],
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Natural Language :: Russian',
+    ),
 )
