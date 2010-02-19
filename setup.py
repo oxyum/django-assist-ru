@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='django-assist-ru',
-    version='0.1.0',
+    version='0.2.0',
     author='Mikhail Korobov',
     author_email='kmike84@gmail.com',
     packages=['assist', 'assist.migrations'],

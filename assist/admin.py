@@ -3,7 +3,8 @@ from django.contrib import admin
 from assist.models import AssistAuthResult
 
 class AssistAuthResultAdmin(admin.ModelAdmin):
-    list_display = ['BillNumber', 'OrderNumber', 'Date', 'Total', 'Status', 'Response_Code', 'Recommendation', 'PacketDate']
+    list_display = ['BillNumber', 'OrderNumber', 'Date', 'Total', 'Status',
+                    'Response_Code', 'Recommendation', 'PatmentType']
     list_filter = ['Status', 'Response_Code']
     date_hierarchy = 'Date'
     search_fields = ['OrderNumber', 'BillNumber']

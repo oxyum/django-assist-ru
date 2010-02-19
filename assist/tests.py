@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from assist.managers import parse_csv_report
+from assist.api import parse_csv_report, parse_csv_charge_response
 from assist.forms import AssistMode1Form, AssistMode2Form
 from assist.conf import SHOP_IDP
 
@@ -26,3 +26,14 @@ class FormsTest(TestCase):
         form = AssistMode2Form()
         self.assertEqual(form.fields['Shop_IDP'].initial, SHOP_IDP)
         self.assertEqual(form.fields['Shop_IDP'].widget.is_hidden, True)
+
+
+class ChargeTest(TestCase):
+
+    def testErrorParsing(self):
+        response = u'ERROR:Невозможно выполнить операцию по платежу!'.encode('utf8')
+        data = parse_csv_charge_response(response)
+        self.assertEqual(data, {'ERROR': u'Невозможно выполнить операцию по платежу!'})
+
+        self.assertEqual(parse_csv_charge_response('ERROR:'.encode('utf8')), {'ERROR': u''})
+

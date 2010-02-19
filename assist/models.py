@@ -2,7 +2,9 @@
 from django.db import models
 from django.db.models import CharField, DateTimeField, IntegerField
 
+from assist import AssistChargeError
 from assist.managers import AssistAuthResultManager
+from assist.api import charge_bill
 
 RESPONSE_CODE_CHOICES = (
     ('AS000', u'АВТОРИЗАЦИЯ УСПЕШНО ЗАВЕРШЕНА'),
@@ -98,3 +100,9 @@ class AssistAuthResult(models.Model):
     class Meta:
         verbose_name = u'Результат авторизации в системе Assist'
         verbose_name_plural = u'Результаты авторизации в системе Assist'
+
+    def charge(self):
+        if (self.Status == 'Preauthorized'):
+            return charge_bill(self.BillNumber)
+        raise AssistChargeError('Invalid bill status')
+
