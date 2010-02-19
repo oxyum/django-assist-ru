@@ -75,6 +75,7 @@ def parse_csv_response(data):
         results.append(d)
     return results
 
+
 class AssistAuthResultManager(models.Manager):
 
     def charge(self, Billnumber,
@@ -107,11 +108,11 @@ class AssistAuthResultManager(models.Manager):
         auth_result = {}
         return self.create(**auth_result)
 
-    def fetch_auth_report(self):
+    def update_auth_report(self):
         """ Получить результаты авторизации через запрос к серверу ASSIST.
             По правилам ASSIST, нельзя выполнять чаще, чем 1 раз в 10 минут.
-            Получает все данные за последние 3 дня и создает по ним нужные
-            записи в БД.
+            Получает все данные за последние 3 дня и создает/обновляет по
+            ним нужные записи в БД (по одной записи на каждый BillNumber).
         """
         data = urllib.urlencode((
                    ('Shop_ID', SHOP_IDP),
@@ -121,4 +122,13 @@ class AssistAuthResultManager(models.Manager):
                ))
         response = urllib2.urlopen(GET_RESULTS_URL, data)
         results = parse_csv_response(response.read())
+        for row in results:
+            instance = self.model(**row)
+            try:
+                old_instance = self.get(BillNumber=instance.BillNumber)
+                pk = old_instance.pk
+            except self.model.DoesNotExist:
+                pk = None
+            instance.pk = pk
+            instance.save()
         return results
