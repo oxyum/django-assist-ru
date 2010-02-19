@@ -87,14 +87,14 @@ ASSIST, в django-assist-ru есть 2 формы: AssistMode1Form и AssistMode
     def go_to_assist(request, order_id)
         order = get_object_or_404(Order, pk = order_id)
         form = AssistMode2Form(initial={
-                                   'Order_IDP': order.id,
-                                   'Subtotal_P': order.total,
-                                   'Comment': order.name,
-                                   'LastName': request.user.last_name,
-                                   'FirstName': request.user.first_name,
-                                   'Email': request.user.email,
-                                   'Phone': request.user.get_profile().phone,
-                               })
+                   'Order_IDP': order.id,
+                   'Subtotal_P': order.total,
+                   'Comment': order.name,
+                   'LastName': request.user.last_name,
+                   'FirstName': request.user.first_name,
+                   'Email': request.user.email,
+                   'Phone': request.user.get_profile().phone,
+               })
         return direct_to_template(request, 'go_to_assist.html', {'form': form})
 
 За полным перечнем допустимых в initial полей можно обратиться к документации

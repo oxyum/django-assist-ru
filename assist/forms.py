@@ -37,9 +37,9 @@ class AssistMode1Form(HiddenForm):
     target = MODE1_URL
 
     def __init__(self, *args, **kwargs):
+        super(AssistMode1Form, self).__init__(*args, **kwargs)
         if not TEST_MODE:
             del self.fields['DemoResult']
-        super(AssistMode1Form, self).__init__(*args, **kwargs)
 
 
 class AssistMode2Form(AssistMode1Form):
