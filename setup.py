@@ -2,6 +2,9 @@
 #coding: utf-8
 from distutils.core import setup
 
+import sys
+reload(sys).setdefaultencoding("UTF-8")
+
 setup(
     name='django-assist-ru',
     version='0.2.0',
@@ -10,12 +13,12 @@ setup(
     packages=['assist', 'assist.migrations'],
     url='http://bitbucket.org/kmike/django-assist-ru/',
     download_url = 'http://bitbucket.org/kmike/django-assist-ru/get/tip.zip',
-    license='MIT license',
-    description=u'Приложение для интеграции платежной системы ASSIST в проекты на Django.',
-    long_description=open('README.rst').read(),
+    license = 'MIT license',
+    description = u'Приложение для интеграции платежной системы ASSIST в проекты на Django.'.encode('utf8'),
+    long_description = open('README.rst').read().decode('utf8'),
 
     classifiers=(
-        'Development Status :: Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
