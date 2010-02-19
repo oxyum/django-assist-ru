@@ -3,7 +3,7 @@
 from django import forms
 from django.forms import CharField, IntegerField, DecimalField
 
-from assist.conf import SHOP_IDP
+from assist.conf import SHOP_IDP, TEST_MODE, MODE1_URL, MODE2_URL
 
 class HiddenForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -32,6 +32,14 @@ class AssistMode1Form(HiddenForm):
     PayCashPayment  = IntegerField(label=u'Может ли покупатель сделать платеж с помощью платежной системы PayCash', initial=1, required=False)
     QiwiBeelinePayment = IntegerField(label=u'Может ли покупатель сделать платеж с помощью платежного средства «Мобильный платеж. Интернет (Билайн)» системы QIWI', initial=1, required=False)
     AssistIDCCPayment = IntegerField(label=u'Может ли покупатель сделать платеж по кредитной карте с использованием Assist®ID', initial=1, required=False)
+    DemoResult = CharField(label=u'', max_length=5, required=True, initial='AS000')
+
+    target = MODE1_URL
+
+    def __init__(self, *args, **kwargs):
+        if not TEST_MODE:
+            del self.fields['DemoResult']
+        super(AssistMode1Form, self).__init__(*args, **kwargs)
 
 
 class AssistMode2Form(AssistMode1Form):
@@ -45,3 +53,5 @@ class AssistMode2Form(AssistMode1Form):
     State = CharField(label=u'Код штата/региона', max_length=3, required=False)
     City = CharField(label=u'Город', max_length=64, required=False)
     Zip = CharField(label=u'Почтовый индекс', max_length=64, required=False)
+
+    target = MODE2_URL
