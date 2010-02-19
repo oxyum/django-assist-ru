@@ -4,7 +4,7 @@ from django.db.models import CharField, DateTimeField, IntegerField
 
 from assist import AssistChargeError
 from assist.managers import AssistAuthResultManager
-from assist.api import charge_bill
+from assist.api import charge_bill, refund
 
 RESPONSE_CODE_CHOICES = (
     ('AS000', u'АВТОРИЗАЦИЯ УСПЕШНО ЗАВЕРШЕНА'),
@@ -105,4 +105,7 @@ class AssistAuthResult(models.Model):
         if (self.Status == 'Preauthorized'):
             return charge_bill(self.BillNumber)
         raise AssistChargeError('Invalid bill status')
+
+    def refund(self):
+        return refund(self.BillNumber)
 

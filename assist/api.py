@@ -6,7 +6,7 @@ from datetime import datetime
 from django.utils.datastructures import SortedDict
 
 from assist import AssistChargeError
-from assist.conf import GET_RESULTS_URL, CHARGE_URL, SHOP_IDP, LOGIN, PASSWORD
+from assist.conf import GET_RESULTS_URL, REFUND_URL, CHARGE_URL, SHOP_IDP, LOGIN, PASSWORD
 
 # Названия полей, которые приходят в CSV, не совпадают с теми, что описаны в
 # приложении 5.4, поэтому явно прописываем соответствие
@@ -50,6 +50,9 @@ ASSIST_FORMAT_WDDX = 2
 ASSIST_FORMAT_XML = 3
 ASSIST_FORMAT_SOAP = 4
 
+ASSIST_RVR_SHOP = 1
+ASSIST_RVR_CUSTOMER = 2
+ASSIST_RVR_FRAUD = 3
 
 def _convert_row_dates(row):
     ''' Преобразовать даты из формата ASSIST в формат Django '''
@@ -76,8 +79,10 @@ def parse_csv_report(data):
     return results
 
 
-def parse_csv_charge_response(data):
-    ''' Разобрать CSV-ответ на запрос финансового подтверждения. '''
+def parse_csv_action_response(data):
+    ''' Разобрать CSV-ответ на запрос финансового подтверждения или
+        разблокировки/возврата средств.
+    '''
 
     # В ответ приходит почему-то не список полей с результатами,
     # а только текст ошибки. Поэтому пока так.
@@ -119,7 +124,7 @@ def charge_bill(Billnumber, Subtotal_P=None, Currency=None, Language=1, Format=A
 
     # Данные, по идее, хорошо бы отпарсить и создать модель из них, но т.к.
     # приходят не данные, а признак ошибки, возвращаем просто что есть.
-    result = parse_csv_charge_response(response.read())
+    result = parse_csv_action_response(response.read())
     if ("ERROR" in result) and (result['ERROR']):
         raise AssistChargeError(str(Billnumber)+' '+result['ERROR'].encode('utf8'))
 
@@ -138,3 +143,25 @@ def fetch_auth_report():
     ))
     response = urllib2.urlopen(GET_RESULTS_URL, data)
     return parse_csv_report(response.read())
+
+
+def refund(Billnumber, Subtotal_P=None, Currency=None, Language=1,
+           Format=ASSIST_FORMAT_CSV, S_FIELDS='*', RVRReason=ASSIST_RVR_SHOP):
+    """ Отменить авторизацию по кредитной карте или сделать возврат средств. """
+
+    data = urllib.urlencode((
+        ('Shop_ID', SHOP_IDP),
+        ('Login', LOGIN),
+        ('PASSWORD', PASSWORD),
+        ('Billnumber', Billnumber),
+        ('Language', Language),
+        ('Format', Format),
+        ('S_FIELDS', S_FIELDS),
+    ))
+    response = urllib2.urlopen(REFUND_URL, data)
+    result = parse_csv_action_response(response.read())
+
+    if ("ERROR" in result) and (result['ERROR']):
+        raise AssistChargeError(str(Billnumber)+' '+result['ERROR'].encode('utf8'))
+
+    return result
