@@ -60,8 +60,8 @@ def _convert_row_dates(row):
             row[field] = dt.strftime('%Y-%m-%d %H:%M:%S')
 
 def parse_csv_response(data):
-    ''' Разобрать CSV-ответ на запрос результатов авторизации '''
-    reader = csv.reader(data.decode('1251').encode('utf-8').strip().split('\r\n'), delimiter=';')
+    ''' Разобрать CSV-ответ на запрос результатов авторизации. '''
+    reader = csv.reader(data.splitlines(), delimiter=';')
     fields = reader.next()
     results = []
     for row in reader:
@@ -70,7 +70,7 @@ def parse_csv_response(data):
             if v in ('UNKNOWN', ''):
                 continue
             if k and k in FIELDS_MAPPING:
-                d[FIELDS_MAPPING[k]]=v
+                d[FIELDS_MAPPING[k]]=unicode(v, 'utf8')
         _convert_row_dates(d)
         results.append(d)
     return results
