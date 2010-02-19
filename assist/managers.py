@@ -59,7 +59,7 @@ def _convert_row_dates(row):
             dt = datetime.strptime(row[field], '%d.%m.%Y %H:%M:%S')
             row[field] = dt.strftime('%Y-%m-%d %H:%M:%S')
 
-def parse_csv_response(data):
+def parse_csv_report(data):
     ''' Разобрать CSV-ответ на запрос результатов авторизации. '''
     reader = csv.reader(data.splitlines(), delimiter=';')
     fields = reader.next()
@@ -121,7 +121,7 @@ class AssistAuthResultManager(models.Manager):
                    ('Header1', 1),
                ))
         response = urllib2.urlopen(GET_RESULTS_URL, data)
-        results = parse_csv_response(response.read())
+        results = parse_csv_report(response.read())
         for row in results:
             instance = self.model(**row)
             try:
