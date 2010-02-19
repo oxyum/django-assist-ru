@@ -2,7 +2,7 @@
 import urllib
 import urllib2
 import csv
-import os
+from datetime import datetime
 
 from django.db import models
 from django.utils.datastructures import SortedDict
@@ -46,12 +46,21 @@ FIELDS_MAPPING = {
     'Payment Type': 'PatmentType',
 }
 
+
 ASSIST_FORMAT_CSV = 1
 ASSIST_FORMAT_WDDX = 2
 ASSIST_FORMAT_XML = 3
 ASSIST_FORMAT_SOAP = 4
 
+def _convert_row_dates(row):
+    ''' Преобразовать даты из формата ASSIST в формат Django '''
+    for field in ('Date', 'PacketDate'):
+        if field in row:
+            dt = datetime.strptime(row[field], '%d.%m.%Y %H:%M:%S')
+            row[field] = dt.strftime('%Y-%m-%d %H:%M:%S')
+
 def parse_csv_response(data):
+    ''' Разобрать CSV-ответ на запрос результатов авторизации '''
     reader = csv.reader(data.decode('1251').encode('utf-8').strip().split('\r\n'), delimiter=';')
     fields = reader.next()
     results = []
@@ -62,6 +71,7 @@ def parse_csv_response(data):
                 continue
             if k and k in FIELDS_MAPPING:
                 d[FIELDS_MAPPING[k]]=v
+        _convert_row_dates(d)
         results.append(d)
     return results
 
