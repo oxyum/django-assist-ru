@@ -7,52 +7,8 @@ from django.utils.datastructures import SortedDict
 
 from assist import AssistChargeError
 from assist.conf import GET_RESULTS_URL, REFUND_URL, CHARGE_URL, SHOP_IDP, LOGIN, PASSWORD
+from assist.constants import FIELDS_MAPPING, ASSIST_FORMAT_CSV, ASSIST_RVR_SHOP, ASSIST_LANGUAGE_EN
 
-# Названия полей, которые приходят в CSV, не совпадают с теми, что описаны в
-# приложении 5.4, поэтому явно прописываем соответствие
-FIELDS_MAPPING = {
-    'Order Number': 'OrderNumber',
-    'Result Code': 'Response_Code',
-    'Recommendation': 'Recommendation',
-    'Message': 'Message',
-    'Comment': 'Comment',
-    'Order Date': 'Date',
-    'Order Total': 'Total',
-    'Currency Code': 'Currency',
-    'Card Type': 'CardType',
-    'Card Number': 'CardNumber',
-    'Lastname': 'LastName',
-    'Firstname': 'FirstName',
-    'Middlename': 'MiddleName',
-    'Address': 'Address',
-    'E-mail': 'Email',
-    'Country Code': 'Country',
-    'Currency rate': 'Rate',
-    'Approval Code': 'ApprovalCode',
-    'Mean Subtype': 'CardSubType',
-    'CVC2 Exist': 'CVC2',
-    'Cardholder': 'CardHolder',
-    'IP-address': 'IPAddress',
-    'Protocol Type': 'ProtocolTypeName',
-    'Payment No.': 'BillNumber',
-    'Bank issuer': 'BankName',
-    'Order State': 'Status',
-    'Processing System Response Code': 'Error_Code',
-    'Processing System Response Code Description': 'Error_Comment',
-    'Paket date': 'PacketDate',
-#    'Digital Signature': '_Signature',
-    'Processing System Name': 'ProcessingName',
-    'Payment Type': 'PatmentType',
-}
-
-ASSIST_FORMAT_CSV = 1
-ASSIST_FORMAT_WDDX = 2
-ASSIST_FORMAT_XML = 3
-ASSIST_FORMAT_SOAP = 4
-
-ASSIST_RVR_SHOP = 1
-ASSIST_RVR_CUSTOMER = 2
-ASSIST_RVR_FRAUD = 3
 
 def _convert_row_dates(row):
     ''' Преобразовать даты из формата ASSIST в формат Django '''
@@ -99,7 +55,8 @@ def parse_csv_action_response(data):
     return d
 
 
-def charge_bill(Billnumber, Subtotal_P=None, Currency=None, Language=1, Format=ASSIST_FORMAT_CSV, S_FIELDS='*'):
+def charge_bill(Billnumber, Subtotal_P=None, Currency=None,
+                Language=ASSIST_LANGUAGE_EN, Format=ASSIST_FORMAT_CSV, S_FIELDS='*'):
     """ Отправить запрос на финансовое подтверждение при двустадийном режиме работы."""
 
     if Format != ASSIST_FORMAT_CSV:
@@ -145,7 +102,7 @@ def fetch_auth_report():
     return parse_csv_report(response.read())
 
 
-def refund(Billnumber, Subtotal_P=None, Currency=None, Language=1,
+def refund(Billnumber, Subtotal_P=None, Currency=None, Language=ASSIST_LANGUAGE_EN,
            Format=ASSIST_FORMAT_CSV, S_FIELDS='*', RVRReason=ASSIST_RVR_SHOP):
     """ Отменить авторизацию по кредитной карте или сделать возврат средств. """
 
