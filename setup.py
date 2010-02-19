@@ -12,7 +12,7 @@ setup(
     download_url = 'http://bitbucket.org/kmike/django-assist-ru/get/tip.zip',
     license='MIT license',
     description=u'Приложение для интеграции платежной системы ASSIST в проекты на Django.',
-    long_description=open('README.txt').read(),
+    long_description=open('README.rst').read(),
 
     classifiers=(
         'Development Status :: Development Status :: 2 - Pre-Alpha',
