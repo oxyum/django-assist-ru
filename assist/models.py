@@ -77,7 +77,8 @@ class AssistAuthResult(models.Model):
     CardHolder      = CharField(u'Держатель карты', max_length=128, null=True, blank=True)
     IPAddress       = CharField(u'IP-адрес покупателя', max_length=15, null=True, blank=True)
     ProtocolTypeName = CharField(u'Тип протокола (SET/NET/POS)', max_length=128, null=True, blank=True)
-    BillNumber      = CharField(u'Номер платежа в системе ASSIST', max_length=16, null=True, blank=True, db_index=True)
+    BillNumber      = CharField(u'Номер платежа', max_length=16, null=True, blank=True, db_index=True,
+                                help_text=u'Номер платежа в системе ASSIST')
     BankName        = CharField(u'Название банка-эмитента', max_length=128, null=True, blank=True)
     Status          = CharField(u'Состояние заказа', max_length=128, null=True, blank=True,
                                 choices = STATUS_CHOICES)
