@@ -6,16 +6,13 @@ from assist.managers import parse_csv_response
 from assist.forms import AssistMode1Form, AssistMode2Form
 from assist.conf import SHOP_IDP
 
-csv1 = """Field1;Field2
-123;test
-345;vasia
-""".encode('1251')
+csv1 = """Order Number;Comment\r\n123;test\r\n345;UNKNOWN\r\n""".encode('1251')
 
 class ParsersTest(TestCase):
     def testParseCsvResponse(self):
         results = parse_csv_response(csv1)
-        self.assertEqual(results, [{'Field1':'123', 'Field2':'test'},
-                                   {'Field1':'345', 'Field2':'vasia'}])
+        self.assertEqual(results, [{'OrderNumber':'123', 'Comment':'test'},
+                                   {'OrderNumber':'345'}])
 
 
 class FormsTest(TestCase):
