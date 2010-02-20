@@ -10,6 +10,7 @@ class AssistAuthResultManager(models.Manager):
             каждый BillNumber).
         """
         results = fetch_auth_report()
+        instances = []
         for row in results:
             instance = self.model(**row)
             try:
@@ -19,7 +20,8 @@ class AssistAuthResultManager(models.Manager):
                 pk = None
             instance.pk = pk
             instance.save()
-        return results
+            instances.append(instance)
+        return instances
 
     def actual_for_order(self, OrderNumber):
         """ Возвращает действующий результат авторизации для данного заказа.
