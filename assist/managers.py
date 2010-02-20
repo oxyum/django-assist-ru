@@ -25,14 +25,13 @@ class AssistAuthResultManager(models.Manager):
         """ Возвращает действующий результат авторизации для данного заказа.
             Просто последнюю транзакцию брать нельзя, см. причины в README.
 
-            Игнорируются транзакции со статусом 'in progress', а также
+            Игнорируются транзакции со статусом 'in process', а также
             транзакции с 'негативными' статусами при наличии транзакций с
             соответствующими 'позитивными' статусами.
         """
 
         results = list(self.get_query_set().filter(OrderNumber = OrderNumber).order_by('-BillNumber'))
-
-        to_remove = set(['in progress'])
+        to_remove = set(['in process'])
         for bill in results:
             if bill.Status == 'Authorized': to_remove.add('Not authorized')
             if bill.Status == 'Preauthorized': to_remove.add('Not preauthorized')
