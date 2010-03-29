@@ -10,7 +10,9 @@ setup(
     version='0.3.0',
     author='Mikhail Korobov',
     author_email='kmike84@gmail.com',
+
     packages=['assist', 'assist.migrations'],
+
     url='http://bitbucket.org/kmike/django-assist-ru/',
     download_url = 'http://bitbucket.org/kmike/django-assist-ru/get/tip.zip',
     license = 'MIT license',

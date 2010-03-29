@@ -82,6 +82,7 @@ ASSIST, в django-assist-ru есть 2 формы: AssistMode1Form и AssistMode
     from django.contrib.auth.decorators import login_required
 
     from assist.decorators import cp1251
+    from assist.forms import AssistMode2Form
 
     @cp1251
     @login_required
@@ -113,7 +114,7 @@ django-assist-ru не включает в себя модели "Покупка"
     {% block content %}
         <form action="{{ form.target }}" method="POST">
             <p>{{ form.as_p }}</p>
-            <p><input type="submit" class="button" name='SUBMIT' value="Купить"></p>
+            <p><input type="submit" name='SUBMIT' value="Купить"></p>
         </form>
     {% endblock %}
 
