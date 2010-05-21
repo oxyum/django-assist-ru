@@ -10,7 +10,7 @@ from assist import AssistChargeError
 from assist.conf import GET_RESULTS_URL, REFUND_URL, CHARGE_URL, SHOP_IDP, LOGIN, PASSWORD
 from assist.constants import FIELDS_MAPPING, ASSIST_FORMAT_CSV, ASSIST_RVR_SHOP, ASSIST_LANGUAGE_EN
 
-def _load_url(url, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
+def _load_url(url, data=None, timeout=None):
     """ Поддержка таймаутов для python < 2.6 """
     old_timeout = socket.getdefaulttimeout()
     socket.setdefaulttimeout(timeout)
