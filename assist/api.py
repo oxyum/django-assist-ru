@@ -2,12 +2,23 @@
 import urllib
 import urllib2
 import csv
+import socket
 from datetime import datetime
 from django.utils.datastructures import SortedDict
 
 from assist import AssistChargeError
 from assist.conf import GET_RESULTS_URL, REFUND_URL, CHARGE_URL, SHOP_IDP, LOGIN, PASSWORD
 from assist.constants import FIELDS_MAPPING, ASSIST_FORMAT_CSV, ASSIST_RVR_SHOP, ASSIST_LANGUAGE_EN
+
+def _load_url(url, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
+    """ Поддержка таймаутов для python < 2.6 """
+    old_timeout = socket.getdefaulttimeout()
+    socket.setdefaulttimeout(timeout)
+    try:
+        response = urllib2.urlopen(url, data)
+        return response.read()
+    finally:
+        socket.setdefaulttimeout(old_timeout)
 
 
 def _convert_row_dates(row):
@@ -77,11 +88,11 @@ def charge_bill(Billnumber, Subtotal_P=None, Currency=None,
     if (Currency is not None):
         data.append(('Currency', Currency,))
 
-    response = urllib2.urlopen(CHARGE_URL, urllib.urlencode(data))
+    response = _load_url(CHARGE_URL, urllib.urlencode(data), 60)
 
     # Данные, по идее, хорошо бы отпарсить и создать модель из них, но т.к.
     # приходят не данные, а признак ошибки, возвращаем просто что есть.
-    result = parse_csv_action_response(response.read())
+    result = parse_csv_action_response(response)
     if ("ERROR" in result) and (result['ERROR']):
         raise AssistChargeError(str(Billnumber)+' '+result['ERROR'].encode('utf8'))
 
@@ -98,8 +109,8 @@ def fetch_auth_report():
         ('PASSWORD', PASSWORD),
         ('Header1', 1),
     ))
-    response = urllib2.urlopen(GET_RESULTS_URL, data)
-    return parse_csv_report(response.read())
+    response = _load_url(GET_RESULTS_URL, data, 60)
+    return parse_csv_report(response)
 
 
 def refund(Billnumber, Subtotal_P=None, Currency=None, Language=ASSIST_LANGUAGE_EN,
@@ -115,8 +126,8 @@ def refund(Billnumber, Subtotal_P=None, Currency=None, Language=ASSIST_LANGUAGE_
         ('Format', Format),
         ('S_FIELDS', S_FIELDS),
     ))
-    response = urllib2.urlopen(REFUND_URL, data)
-    result = parse_csv_action_response(response.read())
+    response = _load_url(REFUND_URL, data, 60)
+    result = parse_csv_action_response(response)
 
     if ("ERROR" in result) and (result['ERROR']):
         raise AssistChargeError(str(Billnumber)+' '+result['ERROR'].encode('utf8'))
