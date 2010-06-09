@@ -210,3 +210,4 @@ refund::
     bill = AssistAuthResult.objects.get(id=123)
     bill.refund()
 
+Возврат средств за оплаченный заказ осуществляется этой же командой.

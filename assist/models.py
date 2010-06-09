@@ -1,4 +1,5 @@
 #coding: utf-8
+from datetime import datetime
 from django.db import models
 from django.db.models import CharField, DateTimeField, IntegerField
 
@@ -6,6 +7,18 @@ from assist import AssistChargeError
 from assist.managers import AssistAuthResultManager
 from assist.api import charge_bill, refund
 from assist.constants import RESPONSE_CODE_CHOICES, STATUS_CHOICES, PAYMENT_TRANSACTION_TYPE_CHOICES
+from assist.utils import get_changes_between_models
+
+class AssistResultChange(models.Model):
+    auth_result = models.ForeignKey('AssistAuthResult', verbose_name=u'Результат авторизации в Assist')
+    changed_at = DateTimeField(u'Дата и время изменения', default=datetime.now)
+    changes = models.TextField(u'Что изменилось')
+
+    class Meta:
+        verbose_name = u'Изменения в результатах Assist'
+        verbose_name_plural = u'Журнал изменений результатов Assist'
+        ordering=['-id']
+
 
 class AssistAuthResult(models.Model):
     OrderNumber     = CharField(u'Номер заказа', max_length=128, null=True, blank=True, db_index=True)
@@ -62,4 +75,12 @@ class AssistAuthResult(models.Model):
 
     def refund(self):
         return refund(self.BillNumber)
+
+    def _log_changes(self, old):
+        changes = get_changes_between_models(old, self, excludes=['PacketDate'])
+        changes_txt = "\n".join(["%s: %s -> %s" % (f, changes[f][0], changes[f][1]) for f in changes])
+        if changes:
+            # приписываем историю к старому результату, т.к. id у нового будет тем же
+            AssistResultChange.objects.create(auth_result = old, changes = changes_txt)
+
 

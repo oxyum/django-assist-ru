@@ -15,6 +15,7 @@ class AssistAuthResultManager(models.Manager):
             instance = self.model(**row)
             try:
                 old_instance = self.get(BillNumber=instance.BillNumber)
+                instance._log_changes(old_instance)
                 pk = old_instance.pk
             except self.model.DoesNotExist:
                 pk = None
