@@ -58,7 +58,7 @@ class AssistAuthResult(models.Model):
     def charge(self):
         if (self.Status == 'Preauthorized'):
             return charge_bill(self.BillNumber)
-        raise AssistChargeError('Invalid bill status')
+        raise AssistChargeError('%s: Invalid bill status (%s)' % (self.BillNumber, self.Status))
 
     def refund(self):
         return refund(self.BillNumber)
