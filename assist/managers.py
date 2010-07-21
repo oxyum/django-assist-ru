@@ -24,15 +24,7 @@ class AssistAuthResultManager(models.Manager):
             instances.append(instance)
         return instances
 
-    def actual_for_order(self, OrderNumber):
-        """ Возвращает действующий результат авторизации для данного заказа.
-            Просто последнюю транзакцию брать нельзя, см. причины в README.
-
-            Игнорируются транзакции со статусом 'in process', а также
-            транзакции с 'негативными' статусами при наличии транзакций с
-            соответствующими 'позитивными' статусами.
-        """
-
+    def meaningful(self, OrderNumber):
         results = list(self.get_query_set().filter(OrderNumber = OrderNumber).order_by('-BillNumber'))
         to_remove = set(['in process'])
         for bill in results:
@@ -42,9 +34,17 @@ class AssistAuthResultManager(models.Manager):
             if bill.Status == 'Voided':     to_remove.add('Not Voided')
             if bill.Status == 'Refunded':   to_remove.add('Not Refunded')
             if bill.Status == 'Reversaled': to_remove.add('Not Reversaled')
+        return [b for b in results if b.Status not in to_remove]
 
-        results = [b for b in results if b.Status not in to_remove]
+    def actual_for_order(self, OrderNumber):
+        """ Возвращает действующий результат авторизации для данного заказа.
+            Просто последнюю транзакцию брать нельзя, см. причины в README.
 
+            Игнорируются транзакции со статусом 'in process', а также
+            транзакции с 'негативными' статусами при наличии транзакций с
+            соответствующими 'позитивными' статусами.
+        """
+        results = self.meaningful(OrderNumber)
         if not results:
             return None
         return results[0]
