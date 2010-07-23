@@ -7,7 +7,7 @@ reload(sys).setdefaultencoding("UTF-8")
 
 setup(
     name='django-assist-ru',
-    version='0.5.1',
+    version='0.6.0',
     author='Mikhail Korobov',
     author_email='kmike84@gmail.com',
 
