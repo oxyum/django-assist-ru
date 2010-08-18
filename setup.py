@@ -19,7 +19,7 @@ setup(
     description = u'Приложение для интеграции платежной системы ASSIST в проекты на Django.'.encode('utf8'),
     long_description = open('README.rst').read().decode('utf8'),
 
-    classifiers=(
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
@@ -28,5 +28,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Natural Language :: Russian',
-    ),
+    ],
 )
