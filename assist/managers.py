@@ -9,7 +9,8 @@ class AssistAuthResultManager(models.Manager):
             создает/обновляет по ним нужные записи в БД (по одной записи на
             каждый BillNumber).
         """
-        results = fetch_auth_report()
+        if results is None:
+            results = fetch_auth_report()
         instances = []
         for row in results:
             instance = self.model(**row)

@@ -8,6 +8,8 @@ SHOP_IDP = settings.ASSIST_SHOP_IDP
 LOGIN = settings.ASSIST_LOGIN
 PASSWORD = settings.ASSIST_PASSWORD
 
+SENDRESULT_SECRET = getattr(settings, 'ASSIST_SENDRESULT_SECRET', '')
+
 REAL_ASSIST_SERVER = getattr(settings, 'ASSIST_SERVER', REAL_SERVER)
 TEST_MODE = getattr(settings, 'ASSIST_TEST_MODE', False)
 
